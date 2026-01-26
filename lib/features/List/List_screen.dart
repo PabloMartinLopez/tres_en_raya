@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ListScreen extends StatefulWidget {
@@ -8,28 +9,41 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  Set<Map<String, Object>> data = {
-    {'id': 1, 'name': 'game1', 'status': 'Por empezar'},
-    {'id': 2, 'name': 'game2', 'status': 'tu turno'},
-    {'id': 3, 'name': 'game3', 'status': 'turno del rival'},
-    {'id': 4, 'name': 'game4', 'status': 'ganado'},
-    {'id': 5, 'name': 'game5', 'status': 'perdido'},
-  };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Nombre del jugador"), centerTitle: true),
-      body: ListView.separated(
-        itemBuilder: (context, index) => GestureDetector(
-          onTap: () => Navigator.pushNamed(context, '/game'),
-          child: ListTile(
-            title: Text(data.elementAt(index)['name'].toString()),
-            subtitle: Text(data.elementAt(index)['status'].toString()),
-          ),
-        ),
-        separatorBuilder: (context, index) => Divider(color: Colors.black),
-        itemCount: data.length,
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('partidas').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text("Error"));
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final docs = snapshot.data!.docs;
+
+          return ListView.separated(
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(docs[index].id),
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  '/game',
+                  arguments: docs[index].id,
+                ),
+              );
+            },
+            separatorBuilder: (context, index) {
+              return Divider();
+            },
+            itemCount: docs.length,
+          );
+        },
       ),
     );
   }

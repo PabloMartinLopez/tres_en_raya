@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tres_en_raya/data/dataClass.dart';
+import 'package:uuid/uuid.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -36,6 +38,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   else{
                     print("No validado");
                   }
+                  var uuid = Uuid();
+
+                  Dataclass.id = uuid.v4();
+                  Dataclass.name = _userController.text;
+
                 }, child: Text("Login"))
               ],
             )
