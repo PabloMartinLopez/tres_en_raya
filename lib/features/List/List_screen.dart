@@ -9,7 +9,6 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +30,18 @@ class _ListScreenState extends State<ListScreen> {
             itemBuilder: (context, index) {
               return ListTile(
                 title: Text(docs[index].id),
+                subtitle: Row(
+                  children: [
+                    Text('${docs[index]['estado']} - '),
+                    Text(
+                      '${docs[index]['jugador1']['nickname'] != "" ? docs[index]['jugador1']['nickname'] : "Esperando jugador"} ',
+                    ),
+                    Text("VS", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      ' ${docs[index]['jugador2']['nickname'] != "" ? docs[index]['jugador2']['nickname'] : "Esperando rival"}',
+                    ),
+                  ],
+                ),
                 onTap: () => Navigator.pushNamed(
                   context,
                   '/game',
